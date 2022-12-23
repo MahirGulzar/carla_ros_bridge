@@ -78,7 +78,7 @@ class Camera(Sensor):
         self.camera_info_publisher = node.new_publisher(CameraInfo, self.get_topic_prefix() +
                                                         '/camera_info', qos_profile=10)
         self.camera_image_publisher = node.new_publisher(Image, self.get_topic_prefix() +
-                                                         '/' + 'image_rect_color', qos_profile=10)
+                                                         '/' + 'image_raw', qos_profile=10)
 
     def destroy(self):
         super(Camera, self).destroy()
