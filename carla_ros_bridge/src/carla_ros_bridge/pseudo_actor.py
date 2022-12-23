@@ -22,7 +22,7 @@ class PseudoActor(object):
     Generic base class for Pseudo actors (that are not existing in Carla world)
     """
 
-    def __init__(self, uid, name, parent, node):
+    def __init__(self, uid, name, parent, node, topic=""):
         """
         Constructor
 
@@ -36,11 +36,14 @@ class PseudoActor(object):
         :type prefix: string
         :param node: node-handle
         :type node: CompatibleNode
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         self.uid = uid
         self.name = name
         self.parent = parent
         self.node = node
+        self.topic = topic
 
         if self.uid is None:
             raise TypeError("Actor ID is not set")
@@ -96,7 +99,7 @@ class PseudoActor(object):
         :return: the final topic name of this object
         :rtype: string
         """
-        return "/carla/" + self.get_prefix()
+        return self.topic if self.topic else "/carla/" + self.get_prefix()
 
     def update(self, frame, timestamp):
         """

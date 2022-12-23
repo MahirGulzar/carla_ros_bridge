@@ -21,7 +21,7 @@ class ActorListSensor(PseudoActor):
     Pseudo actor list sensor
     """
 
-    def __init__(self, uid, name, parent, node, actor_list):
+    def __init__(self, uid, name, parent, node, actor_list, topic=""):
         """
         Constructor
         :param uid: unique identifier for this object
@@ -41,7 +41,8 @@ class ActorListSensor(PseudoActor):
         super(ActorListSensor, self).__init__(uid=uid,
                                               name=name,
                                               parent=parent,
-                                              node=node)
+                                              node=node,
+                                              topic=topic)
         self.actor_list = actor_list
         self.actor_list_publisher = node.new_publisher(CarlaActorList, self.get_topic_prefix(), qos_profile=10)
 

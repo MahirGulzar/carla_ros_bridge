@@ -61,6 +61,7 @@ class Sensor(Actor):
                  # if a sensor only delivers data on special events,
                  # do not wait for it. That means you might get data from a
                  # sensor, that belongs to a different frame
+                 topic=""
                  ):
         """
         Constructor
@@ -81,12 +82,15 @@ class Sensor(Actor):
         :type synchronous_mode: bool
         :param prefix: the topic prefix to be used for this actor
         :type prefix: string
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(Sensor, self).__init__(uid=uid,
                                      name=name,
                                      parent=parent,
                                      node=node,
-                                     carla_actor=carla_actor)
+                                     carla_actor=carla_actor,
+                                     topic=topic)
 
         self.relative_spawn_pose = relative_spawn_pose
         self.synchronous_mode = synchronous_mode

@@ -238,6 +238,14 @@ class CarlaSpawnObjects(CompatibleNode):
                 spawn_object_request.attach_to = attached_vehicle_id if attached_vehicle_id is not None else 0
                 spawn_object_request.transform = sensor_transform
                 spawn_object_request.random_pose = False  # never set a random pose for a sensor
+                topic_name = ""
+                try:
+                    topic_name = str(sensor_spec.pop("topic_name"))
+                except KeyError as e:
+                    self.logwarn(
+                        "Sensor {} does not have {} attribute".format(sensor_name, e))
+
+                spawn_object_request.topic_name = topic_name
 
                 attached_objects = []
                 for attribute, value in sensor_spec.items():

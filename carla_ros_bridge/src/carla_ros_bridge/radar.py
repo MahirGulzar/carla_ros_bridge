@@ -23,7 +23,7 @@ class Radar(Sensor):
     Actor implementation details of Carla RADAR
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):
         """
         Constructor
 
@@ -41,6 +41,8 @@ class Radar(Sensor):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(Radar, self).__init__(uid=uid,
                                     name=name,
@@ -48,7 +50,8 @@ class Radar(Sensor):
                                     relative_spawn_pose=relative_spawn_pose,
                                     node=node,
                                     carla_actor=carla_actor,
-                                    synchronous_mode=synchronous_mode)
+                                    synchronous_mode=synchronous_mode,
+                                    topic=topic)
 
         self.radar_publisher = node.new_publisher(PointCloud2, self.get_topic_prefix(), qos_profile=10)
         self.listen()

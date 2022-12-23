@@ -24,7 +24,7 @@ class Lidar(Sensor):
     Actor implementation details for lidars
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):
         """
         Constructor
 
@@ -42,6 +42,8 @@ class Lidar(Sensor):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(Lidar, self).__init__(uid=uid,
                                     name=name,
@@ -49,7 +51,8 @@ class Lidar(Sensor):
                                     relative_spawn_pose=relative_spawn_pose,
                                     node=node,
                                     carla_actor=carla_actor,
-                                    synchronous_mode=synchronous_mode)
+                                    synchronous_mode=synchronous_mode,
+                                    topic=topic)
 
         self.lidar_publisher = node.new_publisher(PointCloud2,
                                                   self.get_topic_prefix(),
@@ -93,7 +96,7 @@ class SemanticLidar(Sensor):
     Actor implementation details for semantic lidars
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):
         """
         Constructor
 
@@ -111,6 +114,8 @@ class SemanticLidar(Sensor):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(SemanticLidar, self).__init__(uid=uid,
                                             name=name,
@@ -118,7 +123,8 @@ class SemanticLidar(Sensor):
                                             relative_spawn_pose=relative_spawn_pose,
                                             node=node,
                                             carla_actor=carla_actor,
-                                            synchronous_mode=synchronous_mode)
+                                            synchronous_mode=synchronous_mode,
+                                            topic=topic)
 
         self.semantic_lidar_publisher = node.new_publisher(
             PointCloud2,

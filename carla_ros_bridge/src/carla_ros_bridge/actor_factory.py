@@ -127,7 +127,7 @@ class ActorFactory(object):
                     carla_actor = self.world.get_actor(actor_id)
                     self._create_object_from_actor(carla_actor, req)
                 elif task_type == ActorFactory.TaskType.SPAWN_PSEUDO_ACTOR and not self.node.shutdown.is_set():
-                    self._create_object(actor_id, req.type, req.id, req.attach_to, req.transform)
+                    self._create_object(actor_id, req.type, req.id, req.attach_to, req.transform, topic=req.topic_name)
                 elif task_type == ActorFactory.TaskType.DESTROY_ACTOR:
                     self._destroy_object(actor_id, delete_actor=True)
 
@@ -230,6 +230,8 @@ class ActorFactory(object):
         parent = None
         # the transform relative to the map
         relative_transform = trans.carla_transform_to_ros_pose(carla_actor.get_transform())
+
+        topic_name = ""
         if carla_actor.parent:
             if carla_actor.parent.id in self.actors:
                 parent = self.actors[carla_actor.parent.id]
@@ -237,6 +239,7 @@ class ActorFactory(object):
                 parent = self._create_object_from_actor(carla_actor.parent)
             if req is not None:
                 relative_transform = req.transform
+                topic_name = req.topic_name
             else:
                 # calculate relative transform to the parent
                 actor_transform_matrix = trans.ros_pose_to_transform_matrix(relative_transform)
@@ -254,7 +257,7 @@ class ActorFactory(object):
         if not name:
             name = str(carla_actor.id)
         obj = self._create_object(carla_actor.id, carla_actor.type_id, name,
-                                  parent_id, relative_transform, carla_actor)
+                                  parent_id, relative_transform, carla_actor, topic=topic_name)
         return obj
 
     def _destroy_object(self, actor_id, delete_actor):
@@ -277,7 +280,7 @@ class ActorFactory(object):
                 pseudo_sensors.append(cls.get_blueprint_name())
         return pseudo_sensors
 
-    def _create_object(self, uid, type_id, name, attach_to, spawn_pose, carla_actor=None):
+    def _create_object(self, uid, type_id, name, attach_to, spawn_pose, carla_actor=None, topic=""):
         # check that the actor is not already created.
         if carla_actor is not None and carla_actor.id in self.actors:
             return None
@@ -368,34 +371,34 @@ class ActorFactory(object):
             if carla_actor.type_id.startswith("sensor.camera"):
                 if carla_actor.type_id.startswith("sensor.camera.rgb"):
                     actor = RgbCamera(uid, name, parent, spawn_pose, self.node,
-                                      carla_actor, self.sync_mode)
+                                      carla_actor, self.sync_mode, topic=topic)
                 elif carla_actor.type_id.startswith("sensor.camera.depth"):
                     actor = DepthCamera(uid, name, parent, spawn_pose,
-                                        self.node, carla_actor, self.sync_mode)
+                                        self.node, carla_actor, self.sync_mode, topic=topic)
                 elif carla_actor.type_id.startswith(
                         "sensor.camera.semantic_segmentation"):
                     actor = SemanticSegmentationCamera(uid, name, parent,
                                                        spawn_pose, self.node,
                                                        carla_actor,
-                                                       self.sync_mode)
+                                                       self.sync_mode, topic=topic)
                 elif carla_actor.type_id.startswith("sensor.camera.dvs"):
                     actor = DVSCamera(uid, name, parent, spawn_pose, self.node,
-                                      carla_actor, self.sync_mode)
+                                      carla_actor, self.sync_mode, topic=topic)
                 else:
                     actor = Camera(uid, name, parent, spawn_pose, self.node,
-                                   carla_actor, self.sync_mode)
+                                   carla_actor, self.sync_mode, topic=topic)
             elif carla_actor.type_id.startswith("sensor.lidar"):
                 if carla_actor.type_id.endswith("sensor.lidar.ray_cast"):
                     actor = Lidar(uid, name, parent, spawn_pose, self.node,
-                                  carla_actor, self.sync_mode)
+                                  carla_actor, self.sync_mode, topic=topic)
                 elif carla_actor.type_id.endswith(
                         "sensor.lidar.ray_cast_semantic"):
                     actor = SemanticLidar(uid, name, parent, spawn_pose,
                                           self.node, carla_actor,
-                                          self.sync_mode)
+                                          self.sync_mode, topic=topic)
             elif carla_actor.type_id.startswith("sensor.other.radar"):
                 actor = Radar(uid, name, parent, spawn_pose, self.node,
-                              carla_actor, self.sync_mode)
+                              carla_actor, self.sync_mode, topic=topic)
             elif carla_actor.type_id.startswith("sensor.other.gnss"):
                 actor = Gnss(uid, name, parent, spawn_pose, self.node,
                              carla_actor, self.sync_mode)
@@ -414,7 +417,7 @@ class ActorFactory(object):
                                            self.sync_mode)
             else:
                 actor = Sensor(uid, name, parent, spawn_pose, self.node,
-                               carla_actor, self.sync_mode)
+                               carla_actor, self.sync_mode, topic=topic)
         elif carla_actor.type_id.startswith("spectator"):
             actor = Spectator(uid, name, parent, self.node, carla_actor)
         elif carla_actor.type_id.startswith("walker"):

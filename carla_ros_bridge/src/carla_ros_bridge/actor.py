@@ -23,7 +23,7 @@ class Actor(PseudoActor):
     Generic base class for all carla actors
     """
 
-    def __init__(self, uid, name, parent, node, carla_actor):
+    def __init__(self, uid, name, parent, node, carla_actor, topic=""):
         """
         Constructor
 
@@ -37,11 +37,14 @@ class Actor(PseudoActor):
         :type node: CompatibleNode
         :param carla_actor: carla actor object
         :type carla_actor: carla.Actor
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(Actor, self).__init__(uid=uid,
                                     name=name,
                                     parent=parent,
-                                    node=node)
+                                    node=node,
+                                    topic=topic)
         self.carla_actor = carla_actor
         self.carla_actor_id = carla_actor.id
 

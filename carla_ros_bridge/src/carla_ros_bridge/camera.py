@@ -38,7 +38,7 @@ class Camera(Sensor):
     # global cv bridge to convert image between opencv and ros
     cv_bridge = CvBridge()
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, is_event_sensor=False):  # pylint: disable=too-many-arguments
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, is_event_sensor=False, topic=""):  # pylint: disable=too-many-arguments
         """
         Constructor
 
@@ -54,6 +54,8 @@ class Camera(Sensor):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(Camera, self).__init__(uid=uid,
                                      name=name,
@@ -62,7 +64,8 @@ class Camera(Sensor):
                                      node=node,
                                      carla_actor=carla_actor,
                                      synchronous_mode=synchronous_mode,
-                                     is_event_sensor=is_event_sensor)
+                                     is_event_sensor=is_event_sensor,
+                                     topic=topic)
 
         if self.__class__.__name__ == "Camera":
             self.node.logwarn("Created Unsupported Camera Actor"
@@ -75,7 +78,7 @@ class Camera(Sensor):
         self.camera_info_publisher = node.new_publisher(CameraInfo, self.get_topic_prefix() +
                                                         '/camera_info', qos_profile=10)
         self.camera_image_publisher = node.new_publisher(Image, self.get_topic_prefix() +
-                                                         '/' + 'image', qos_profile=10)
+                                                         '/' + 'image_rect_color', qos_profile=10)
 
     def destroy(self):
         super(Camera, self).destroy()
@@ -185,7 +188,7 @@ class RgbCamera(Camera):
     Camera implementation details for rgb camera
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):
         """
         Constructor
 
@@ -203,6 +206,8 @@ class RgbCamera(Camera):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(RgbCamera, self).__init__(uid=uid,
                                         name=name,
@@ -210,7 +215,8 @@ class RgbCamera(Camera):
                                         relative_spawn_pose=relative_spawn_pose,
                                         node=node,
                                         carla_actor=carla_actor,
-                                        synchronous_mode=synchronous_mode)
+                                        synchronous_mode=synchronous_mode,
+                                        topic=topic)
 
         self.listen()
 
@@ -240,7 +246,7 @@ class DepthCamera(Camera):
     Camera implementation details for depth camera
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):
         """
         Constructor
 
@@ -258,6 +264,8 @@ class DepthCamera(Camera):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(DepthCamera, self).__init__(uid=uid,
                                           name=name,
@@ -265,7 +273,8 @@ class DepthCamera(Camera):
                                           relative_spawn_pose=relative_spawn_pose,
                                           node=node,
                                           carla_actor=carla_actor,
-                                          synchronous_mode=synchronous_mode)
+                                          synchronous_mode=synchronous_mode,
+                                          topic=topic)
 
         self.listen()
 
@@ -317,7 +326,7 @@ class SemanticSegmentationCamera(Camera):
     Camera implementation details for segmentation camera
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):
         """
         Constructor
 
@@ -335,6 +344,8 @@ class SemanticSegmentationCamera(Camera):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(
             SemanticSegmentationCamera, self).__init__(uid=uid,
@@ -343,7 +354,8 @@ class SemanticSegmentationCamera(Camera):
                                                        relative_spawn_pose=relative_spawn_pose,
                                                        node=node,
                                                        synchronous_mode=synchronous_mode,
-                                                       carla_actor=carla_actor)
+                                                       carla_actor=carla_actor,
+                                                       topic=topic)
 
         self.listen()
 
@@ -374,7 +386,7 @@ class DVSCamera(Camera):
     Sensor implementation details for dvs cameras
     """
 
-    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode):  # pylint: disable=too-many-arguments
+    def __init__(self, uid, name, parent, relative_spawn_pose, node, carla_actor, synchronous_mode, topic=""):  # pylint: disable=too-many-arguments
         """
         Constructor
 
@@ -392,6 +404,8 @@ class DVSCamera(Camera):
         :type carla_actor: carla.Actor
         :param synchronous_mode: use in synchronous mode?
         :type synchronous_mode: bool
+        :param topic: optional name for rostopic
+        :type topic: string
         """
         super(DVSCamera, self).__init__(uid=uid,
                                         name=name,
@@ -400,7 +414,8 @@ class DVSCamera(Camera):
                                         node=node,
                                         carla_actor=carla_actor,
                                         synchronous_mode=synchronous_mode,
-                                        is_event_sensor=True)
+                                        is_event_sensor=True,
+                                        topic=topic)
 
         self._dvs_events = None
         self.dvs_camera_publisher = node.new_publisher(PointCloud2,
